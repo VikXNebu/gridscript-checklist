@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GridScript Learning Checklist</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&display=swap');
+
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2128;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #7d8590;
+    --teal: #2dd4bf;
+    --purple: #a78bfa;
+    --amber: #fbbf24;
+    --coral: #f87171;
+    --green: #34d399;
+    --blue: #60a5fa;
+    --done-bg: #1a2e1a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 32px 20px;
+  }
+
+  .header {
+    max-width: 860px;
+    margin: 0 auto 40px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 24px;
+  }
+
+  .header h1 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--teal);
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+  }
+
+  .header p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .progress-bar-wrap {
+    margin-top: 16px;
+    background: var(--surface2);
+    border-radius: 4px;
+    height: 6px;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--teal), var(--purple));
+    border-radius: 4px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  .progress-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  .phase {
+    max-width: 860px;
+    margin: 0 auto 36px;
+  }
+
+  .phase-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .phase-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .phase-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .phase-subtitle {
+    font-size: 12px;
+    color: var(--muted);
+    margin-left: auto;
+    font-style: italic;
+  }
+
+  .resource-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .resource-card:hover {
+    border-color: #484f58;
+  }
+
+  .resource-card.completed {
+    background: var(--done-bg);
+    border-color: #2d4a2d;
+  }
+
+  .resource-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 16px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .checkbox {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+
+  .checkbox.checked {
+    background: var(--green);
+    border-color: var(--green);
+  }
+
+  .checkbox.checked::after {
+    content: '✓';
+    font-size: 11px;
+    color: #0d1117;
+    font-weight: 700;
+  }
+
+  .resource-meta {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .resource-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-bottom: 3px;
+  }
+
+  .resource-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.4;
+    margin-bottom: 4px;
+  }
+
+  .resource-card.completed .resource-title {
+    color: var(--muted);
+    text-decoration: line-through;
+    text-decoration-color: #4a5568;
+  }
+
+  .resource-type {
+    display: inline-block;
+    font-size: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    padding: 2px 7px;
+    border-radius: 3px;
+    margin-right: 6px;
+    font-weight: 600;
+  }
+
+  .tag-free { background: #1a3a2a; color: var(--green); }
+  .tag-paid { background: #3a2a1a; color: var(--amber); }
+  .tag-video { background: #1a2a3a; color: var(--blue); }
+  .tag-reading { background: #2a1a3a; color: var(--purple); }
+  .tag-interactive { background: #2a2a1a; color: var(--teal); }
+
+  .expand-btn {
+    font-size: 12px;
+    color: var(--muted);
+    flex-shrink: 0;
+    transition: transform 0.2s;
+    padding-top: 3px;
+  }
+
+  .resource-detail {
+    display: none;
+    padding: 0 16px 16px 48px;
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+    margin-top: 0;
+  }
+
+  .resource-detail.open {
+    display: block;
+  }
+
+  .detail-row {
+    margin-bottom: 10px;
+  }
+
+  .detail-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 3px;
+  }
+
+  .detail-text {
+    font-size: 13px;
+    color: #b1bac4;
+    line-height: 1.6;
+  }
+
+  .gridscript-link {
+    display: inline-block;
+    font-size: 11px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 3px 8px;
+    color: var(--teal);
+    font-family: 'IBM Plex Mono', monospace;
+    margin-top: 4px;
+  }
+
+  .action-item {
+    font-size: 12px;
+    color: var(--amber);
+    padding: 6px 10px;
+    background: #2a1f00;
+    border-left: 3px solid var(--amber);
+    border-radius: 0 4px 4px 0;
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+
+  .skip-note {
+    font-size: 12px;
+    color: var(--coral);
+    padding: 5px 10px;
+    background: #2a1010;
+    border-left: 3px solid var(--coral);
+    border-radius: 0 4px 4px 0;
+    margin-top: 6px;
+  }
+
+  .section-divider {
+    max-width: 860px;
+    margin: 0 auto 12px;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+
+  .legend {
+    max-width: 860px;
+    margin: 0 auto 28px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>⚡ GridScript — Learning Checklist</h1>
+  <p>20 resources mapped to each GridScript module. Work through Phase 1 first before writing any code.<br>
+  Click any card to expand details. Check off as you complete each resource.</p>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+  <div class="progress-label" id="progressLabel">0 / 20 completed</div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><span class="resource-type tag-free">FREE</span> Fully free</div>
+  <div class="legend-item"><span class="resource-type tag-paid">PAID</span> Paid / subscription</div>
+  <div class="legend-item"><span class="resource-type tag-video">VIDEO</span> Video / watch</div>
+  <div class="legend-item"><span class="resource-type tag-reading">READ</span> Reading / article</div>
+  <div class="legend-item"><span class="resource-type tag-interactive">COURSE</span> Structured course</div>
+</div>
+
+<!-- PHASE 1 -->
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-dot" style="background:var(--teal)"></div>
+    <div class="phase-title" style="color:var(--teal)">Phase 1 — Foundations</div>
+    <div class="phase-subtitle">Complete before writing any code · ~2 weeks</div>
+  </div>
+
+  <!-- Resource 1 -->
+  <div class="resource-card" id="card-1">
+    <div class="resource-header" onclick="toggleCard(1)">
+      <div class="checkbox" id="cb-1" onclick="event.stopPropagation(); toggleCheck(1)"></div>
+      <div class="resource-meta">
+        <div class="resource-num">01 · Harvard HKS</div>
+        <div class="resource-title">Introduction to Generative AI — Class 1</div>
+        <span class="resource-type tag-free">FREE</span>
+        <span class="resource-type tag-interactive">COURSE</span>
+      </div>
+      <div class="expand-btn" id="exp-1">▾</div>
+    </div>
+    <div class="resource-detail" id="detail-1">
+      <div class="detail-row">
+        <div class="detail-label">What it covers</div>
+        <div class="detail-text">What GenAI is, how LLMs work conceptually, why ChatGPT changed everything. Includes pre-class exercises and downloadable slides. The case study format makes abstract concepts concrete.</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">GridScript module</div>
+        <span class="gridscript-link">Foundation — understanding what the AI engine inside GridScript actually is</span>
+      </div>
+      <div class="action-item">🎯 After this: Write one paragraph explaining to a utility engineer what "the AI" in GridScript is doing — in plain language, no jargon. This becomes your product pitch opening.</div>
+    </div>
+  </div>
+
+  <!-- Resource 5 -->
+  <div class="resource-card" id="card-5">
+    <div class="resource-header" onclick="toggleCard(5)">
+      <div class="checkbox" id="cb-5" onclick="event.stopPropagation(); toggleCheck(5)"></div>
+      <div class="resource-meta">
+        <div class="resource-num">05 · Harvard HKS SLATE</div>
+        <div class="resource-title">The Basics of Generative AI — Reference Guide</div>
+        <span class="resource-type tag-free">FREE</span>
+        <span class="resource-type tag-reading">READ</span>
+      </div>
+      <div class="expand-btn" id="exp-5">▾</div>
+    </div>
+    <div class="resource-detail" id="detail-5">
+      <div class="detail-row">
+        <div class="detail-label">What it covers</div>
+        <div class="detail-text">Quick-reference guide to GenAI fundamentals from Harvard's teaching staff. Covers terminology, capabilities, and limitations. Useful as a glossary you can refer back to throughout your build.</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">GridScript module</div>
+        <span class="gridscript-link">Foundation — terminology you'll use when describing the product to clients</span>
+      </div>
+      <div class="action-item">🎯 Read alongside Resource 1. Takes 20 minutes. Bookmark it — you'll return to it when writing your product documentation.</div>
+    </div>
+  </div>
+
+  <!-- Resource 6 -->
+  <div class="resource-card" id="card-6">
+    <div class="resource-header" onclick="toggleCard(6)">
+      <div class="checkbox" id="cb-6" onclick="event.stopPropagation(); toggleCheck(6)"></div>
+      <div class="resource-meta">
+        <div class="resource-num">06 · Harvard CS50x</div>
+        <div class="resource-title">CS50 Week on Artificial Intelligence</div>
+        <span class="resource-type tag-free">FREE</span>
+        <span class="resource-type tag-interactive">COURSE</span>
+      </div>
+      <div class="expand-btn" id="exp-6">▾</div>
+    </div>
+    <div class="resource-detail" id="detail-6">
+      <div class="detail-row">
+        <div class="detail-label">What it covers</div>
+        <div class="detail-text">David Malan's legendary CS50 AI week. Covers how AI systems reason, make decisions, and are integrated into applications. Production-quality teaching with hands-on exercises. Free with optional verified certificate.</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">GridScript module</div>
+        <span class="gridscript-link">Foundation — how AI reasoning applies to Module 4 (leg setting proposals) and Module 5 (switching sequence)</span>
+      </div>
+      <div class="action-item">🎯 Do the problem sets. CS50 problem sets are where the real learning happens — don't just watch the lecture. Even one completed problem set gives you more confidence than 10 hours of passive watching.</div>
+    </div>
+  </div>
+
+  <!-- Resource 7 -->
+  <div class="resource-card" id="card-7">
+    <div class="resource-header" onclick="toggleCard(7)">
+      <div class="checkbox" id="cb-7" onclick="event.stopPropagation(); toggleCheck(7)"></div>
+      <div class="resource-meta">
+        <div class="resource-num">07 · Harvard CS50 Extension</div>
+        <div class="resource-title">CS50 Extension School Week 10 — Artificial Intelligence (Spring 2025)</div>
+        <span class="resource-type tag-free">FREE</span>
+        <span class="resource-type tag-interactive">COURSE</span>
+      </div>
+      <div class="expand-btn" id="exp-7">▾</div>
+    </div>
+    <div class="resource-detail" id="detail-7">
+      <div class="detail-row">
+        <div class="detail-label">What it covers</div>
+        <div class="detail-text">The Extension School version of CS50's AI week — comes after a full Python, Flask, SQL, and HTML course sequence. More applied than the standalone AI week. Context: Week 6 is Python, Week 9 is Flask — if you have time, weeks 6–10 together give you a working web app foundation.</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">GridScript module</div>
+        <span class="gridscript-link">Foundation + Module 6 (web interface) — if you do weeks 6–10, you can prototype the engineer review UI yourself</span>
+      </div>
+      <div class="skip-note">⚠️ Weeks 6–9 are optional but high value if you want to build the UI yourself rather than hiring a developer. Weeks 6–9 = ~40 hours total. Week 10 alone = ~8 hours.</div>
+    </div>
+  </div>
+
+  <!-- Resource 4 -->
+  <div class="resource-card" id="card-4">
+    <div class="resource-header" onclick="toggleCard(4)">
+      <div class="checkbox" id="cb-4" onclick="event.stopPropagation(); toggleCheck(4)"></div>
+      <div class="resource-meta">
+        <div class="resource-num">04 · Harvard YouTube Playlist</div>
+        <div class="resource-title">Generative AI in Teaching & Learning — Harvard Faculty Videos</div>
+        <span class="resource-type tag-free">FREE</span>
+        <span class="resource-type tag-video">VIDEO</span>
+      </div>
+      <div class="expand-btn" id="exp-4">▾</div>
+    </div>
+    <div class="resource-detail" id="detail-4">
+      <div class="detail-row">
+        <div class="detail-label">What it covers</div>
+        <div class="detail-text">Harvard faculty showing real-world GenAI use cases across different domains — not coding tutorials, but applied thinking. Shows how professionals in expert fields integrate AI into specialist workflows — directly analogous to how GridScript fits into engineering workflows.</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">GridScript module</div>
+        <span class="gridscript-link">Mindset — how domain experts (like you) use AI as a tool, not a replacement</span>
+      </div>
+      <div class="action-item">🎯 Watch selectively — pick 3–4 videos from domains closest to engineering or professional services. 30–60 minutes total. This shapes how you pitch GridScript to utility clients.</div>
+    </div>
+  </div>
+</div>
+
+<!-- PHASE 2 -->
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-dot" style="background:var(--purple)"></div>
+    <div class="phase-title" style="color:var(--purple)">Phase 2 — Prompting and RAG</div>
+    <div class="phase-subtitle">Modules 1, 3, 4 — the AI's core skills · ~1.5 weeks</div>
+  </div>
+
+  <!-- Resource 2 -->
+  <div class="resource-card" id="card-2">
+    <div class="resource-header" onclick="toggleCard(2)">
+      <div class="checkbox" id="cb-2" onclick="event.stopPropagation(); toggleCheck(2)"></div>
+      <div class="resource-meta">
+        <div class="resource-num">02 · Harvard HKS</div>
+        <div class="resource-title">Prompt Engineering — Class 4</div>
+        <span class="resource-type tag-free">FREE</span>
+        <span class="resource-type tag-interactive">COURSE</span>
+      </div>
+      <div class="expand-btn" id="exp-2">▾</div>
+    </div>
+    <div class="resource-detail" id="detail-2">
+      <div class="detail-row">
+        <div class="detail-label">What it covers</div>
+        <div class="detail-text">Task–Instructions–Context (TIC) framework for writing effective prompts. Teaches you to structure prompts that produce reliable, structured outputs. Directly applicable to every AI call GridScript makes.</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">GridScript module</div>
+        <span class="gridscript-link">Module 1 — prompting the vision model to parse PDF SLDs into structured JSON</span>
+        <br><span class="gridscript-link">Module 4 — prompting the AI to propose leg settings with SOP citations</span>
+      </div>
+      <div class="action-item">🎯 After this: Write your first real GridScript prompt. Take one SLD PDF page, open Claude.ai, and prompt it to return the network as structured JSON. Iterate until it works. This is your Module 1 MVP test.</div>
+    </div>
+  </div>
+
+  <!-- Resource 3 -->
+  <div class="resource-card" id="card-3">
+    <div class="resource-header" onclick="toggleCard(3)">
+      <div class="checkbox" id="cb-3" onclick="event.stopPropagation(); toggleCheck(3)"></div>
+      <div class="resource-meta">
+        <div class="resource-num">03 · Harvard HKS</div>
+        <div class="resource-title">Beyond Chatbots: System Prompts, RAG and Fine-tuning — Class 5</div>
+        <span class="resource-type tag-free">FREE</span>
+        <span class="resource-type tag-interactive">COURSE</span>
+      </div>
+      <div class="expand-btn" id="exp-3">▾</div>
+    </div>
+    <div class="resource-detail" id="detail-3">
+      <div class="detail-row">
+        <div class="detail-label">What it covers</div>
+        <div class="detail-text">System prompts, RAG, and fine-tuning — the three techniques for giving an AI specialist knowledge. This is exactly how Module 3 works: the company SOP PDF becomes GridScript's RAG knowledge base, and the system prompt establishes its role as a 22kV protection engineer assistant.</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">GridScript module</div>
+        <span class="gridscript-link">Module 3 — uploading SOP PDF as RAG knowledge base</span>
+        <br><span class="gridscript-link">Module 4 — system prompt that defines GridScript's engineering persona and constraints</span>
+      </div>
+      <div class="action-item">🎯 After this: Write the system prompt for GridScript's protection setting agent. It should establish: role (22kV protection engineer), constraints (must cite SOP clause for every proposal), output format (JSON table), and refusal rules (never propose outside guideline range).</div>
+    </div>
+  </div>
+
+  <!-- Resource 8 -->
+  <div class="resource-card" id="card-8">
+    <div class="resource-header" onclick="toggleCard(8)">
+      <div class="checkbox" id="cb-8" onclick="event.stopPropagation(); toggleCheck(8)"></div>
+      <div class="resource-meta">
+        <div class="resource-num">08 · YouTube</div>
+        <div class="resource-title">Video Resource #8 — (verify URL: youtube.com/watch?v=vw-KWfKwvTQ)</div>
+        <span class="resource-type tag-free">FREE</span>
+        <span class="resource-type tag-video">VIDEO</span>
+      </div>
+      <div class="expand-btn" id="exp-8">▾</div>
+    </div>
+    <div class="resource-detail" id="detail-8">
+      <div class="detail-row">
+        <div class="detail-label">Status</div>
+        <div class="detail-text">The URL provided could not be identified from search results — the video ID "vw-KWfKwvTQ" returned no clear title. Please verify the link is correct and paste the video title here when confirmed.</div>
+      </div>
+      <div class="skip-note">⚠️ Verify this link before scheduling. If it is an AI agents or RAG tutorial, slot it here in Phase 2. If it is unrelated, skip it.</div>
+    </div>
+  </div>
+
+  <!-- Resource 9 -->
+  <div class="resource-card" id="card-9">
+    <div class="resource-header" onclick="toggleCard(9)">
+      <div class="checkbox" id="cb-9" onclick="event.stopPropagation(); toggleCheck(9)"></div>
+      <div class="resource-meta">
+        <div class="resource-num">09 · YouTube</div>
+        <div class="resource-title">AI Agents for Beginners — Full Course (youtube.com/watch?v=JhCl-GeT4jw)</div>
+        <span class="resource-type tag-free">FREE</span>
+        <span class="resource-type tag-video">VIDEO</span>
+      </div>
+      <div class="expand-btn" id="exp-9">▾</div>
+    </div>
+    <div class="resource-detail" id="detail-9">
+      <div class="detail-row">
+        <div class="detail-label">What it covers</div>
+        <div class="detail-text">Microsoft's 10-lesson course taking you from AI agent concepts to working code. Covers the fundamentals of building agents: tools, planning, memory. Practical and code-focused — complements the agentic crash course with actual implementation examples.</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">GridScript module</div>
+        <span class="gridscript-link">Module 5 — the switching sequence agent is a multi-step planning problem, exactly what this course targets</span>
+      </div>
+      <div class="action-item">🎯 Work through lessons 1–6 actively (with code). Lessons 7–10 can be watched passively. The planning and tool-use lessons (3–5) are the most critical for GridScript.</div>
+    </div>
+  </div>
+</div>
+
+<!-- PHASE 3 -->
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-dot" style="background:var(--amber)"></div>
+    <div class="phase-title" style="color:var(--amber)">Phase 3 — Building Agents</div>
+    <div class="phase-subtitle">Modules 4, 5 — the intelligence layer · ~2 weeks, start building</div>
+  </div>
+
+  <!-- Resource 10 -->
+  <div class="resource-card" id="card-10">
+    <div class="resource-header" onclick="toggleCard(10)">
+      <div class="checkbox" id="cb-10" onclick="event.stopPropagation(); toggleCheck(10)"></div>
+      <div class="resource-meta">
+        <div class="resource-num">10 · MongoDB Webinar</div>
+        <div class="resource-title">Intro to Memory Management in AI Agents</div>
+        <span class="resource-type tag-free">FREE</span>
+        <span class="resource-type tag-video">VIDEO</span>
+      </div>
+      <div class="expand-btn" id="exp-10">▾</div>
+    </div>
+    <div class="resource-detail" id="detail-10">
+      <div class="detail-row">
+        <div class="detail-label">What it covers</div>
+        <div class="detail-text">How agents store, recall, and process memory. Covers agentic RAG, memory design patterns, conversational vs long-term memory, and practical implementation using MongoDB's vector search. Directly applicable to how GridScript remembers past switching schedules and learns from engineer corrections.</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">GridScript module</div>
+        <span class="gridscript-link">Module 3 — SOP knowledge base storage and retrieval</span>
+        <br><span class="gridscript-link">Long-term — how GridScript learns from past projects over time</span>
+      </div>
+      <div class="action-item">🎯 After this: Design your GridScript memory schema. What does one "project memory" contain? (SLD before, SLD after, switching steps taken, protection settings changed, work type, date, corrections engineer made.) Sketch this on paper — it becomes your database schema.</div>
+    </div>
+  </div>
+
+  <!-- Resource 12 -->
+  <div class="resource-card" id="card-12">
+    <div class="resource-header" onclick="toggleCard(12)">
+      <div class="checkbox" id="cb-12" onclick="event.stopPropagation(); toggleCheck(12)"></div>
+      <div class="resource-meta">
+        <div class="resource-num">12 · Product Market Fit</div>
+        <div class="resource-title">The Ultimate Beginner's Guide to Building an AI Agent From Zero</div>
+        <span class="resource-type tag-paid">PAID</span>
+        <span class="resource-type tag-reading">READ</span>
+      </div>
+      <div class="expand-btn" id="exp-12">▾</div>
+    </div>
+    <div class="resource-detail" id="detail-12">
+      <div class="detail-row">
+        <div class="detail-label">What it covers</div>
+        <div class="detail-text">Step-by-step guide to building a working agent from scratch. Written for founders without deep technical background — practical, not academic. Focuses on getting something working fast and iterating.</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">GridScript module</div>
+        <span class="gridscript-link">Module 4 + 5 — the first working version of the leg setting and sequence agents</span>
+      </div>
+      <div class="action-item">🎯 This is your first build guide. Follow it to produce a minimal proof-of-concept agent that takes a protection setting input and returns a proposal — even if it only handles one scenario correctly at first.</div>
+    </div>
+  </div>
+
+  <!-- Resource 13 -->
+  <div class="resource-card" id="card-13">
+    <div class="resource-header" onclick="toggleCard(13)">
+      <div class="checkbox" id="cb-13" onclick="event.stopPropagation(); toggleCheck(13)"></div>
+      <div class="resource-meta">
+        <div class="resource-num">13 · Product Market Fit</div>
+        <div class="resource-title">Understanding Claude Dispatch — Complete Guide</div>
+        <span class="resource-type tag-paid">PAID</span>
+        <span class="resource-type tag-reading">READ</span>
+      </div>
+      <div class="expand-btn" id="exp-13">▾</div>
+    </div>
+    <div class="resource-detail" id="detail-13">
+      <div class="detail-row">
+        <div class="detail-label">What it covers</div>
+        <div class="detail-text">How Claude Dispatch routes tasks, manages context, and coordinates sub-agents on your computer. Explains the orchestration layer — how you tell Claude what tools it has access to and how it decides which to call.</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">GridScript module</div>
+        <span class="gridscript-link">Module 4 — how the AI orchestrates between SOP retrieval, constraint checking, and setting proposal in a single workflow</span>
+      </div>
+      <div class="action-item">🎯 After this: Map out GridScript's tool list — what are the 5–8 functions/tools the AI needs to be able to call? (e.g., get_feeder_load, check_thermal_limit, retrieve_sop_clause, propose_is_setting, generate_step.) This list is your agent's action space.</div>
+    </div>
+  </div>
+
+  <!-- Resource 20 -->
+  <div class="resource-card" id="card-20">
+    <div class="resource-header" onclick="toggleCard(20)">
+      <div class="checkbox" id="cb-20" onclick="event.stopPropagation(); toggleCheck(20)"></div>
+      <div class="resource-meta">
+        <div class="resource-num">20 · Product Market Fit</div>
+        <div class="resource-title">The Claude Code Founder Guide</div>
+        <span class="resource-type tag-paid">PAID</span>
+        <span class="resource-type tag-reading">READ</span>
+      </div>
+      <div class="expand-btn" id="exp-20">▾</div>
+    </div>
+    <div class="resource-detail" id="detail-20">
+      <div class="detail-row">
+        <div class="detail-label">What it covers</div>
+        <div class="detail-text">Practical guide for non-developers using Claude Code to build and run workflows. Shows how founders without deep coding background are using AI-assisted coding to build real products. Directly applicable to your situation.</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">GridScript module</div>
+        <span class="gridscript-link">All modules — this is how you build GridScript without a developer co-founder initially</span>
+      </div>
+      <div class="action-item">🎯 This may be your most practically important resource. Claude Code can write the NetworkX graph logic, the API integration, and the PDF parsing code if you describe the requirements precisely. Your switching sequence specification document (from the previous session) IS your prompt to Claude Code.</div>
+    </div>
+  </div>
+
+  <!-- Resource 11 -->
+  <div class="resource-card" id="card-11">
+    <div class="resource-header" onclick="toggleCard(11)">
+      <div class="checkbox" id="cb-11" onclick="event.stopPropagation(); toggleCheck(11)"></div>
+      <div class="resource-meta">
+        <div class="resource-num">11 · Product Market Fit</div>
+        <div class="resource-title">The Playbook to Turn Claude Into a 147-Agent Team</div>
+        <span class="resource-type tag-paid">PAID</span>
+        <span class="resource-type tag-reading">READ</span>
+      </div>
+      <div class="expand-btn" id="exp-11">▾</div>
+    </div>
+    <div class="resource-detail" id="detail-11">
+      <div class="detail-row">
+        <div class="detail-label">What it covers</div>
+        <div class="detail-text">How to select agents, connect them across functions, and make them work together. Covers agent selection frameworks and multi-agent coordination. Useful for thinking about how GridScript's modules interact as a connected agent system.</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">GridScript module</div>
+        <span class="gridscript-link">Architecture — how Module 1 (parsing), Module 3 (RAG), and Module 5 (sequence) handoff between themselves</span>
+      </div>
+      <div class="skip-note">⚠️ Read selectively. Focus on the sections about agent selection and inter-agent handoff. Skip sections about sales, marketing, or HR agent teams — not relevant to your build.</div>
+    </div>
+  </div>
+</div>
+
+<!-- PHASE 4 -->
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-dot" style="background:var(--coral)"></div>
+    <div class="phase-title" style="color:var(--coral)">Phase 4 — Applied Domain Cases</div>
+    <div class="phase-subtitle">Learn from parallel domains — legal and finance maps to engineering · ~1 week</div>
+  </div>
+
+  <!-- Resource 15 -->
+  <div class="resource-card" id="card-15">
+    <div class="resource-header" onclick="toggleCard(15)">
+      <div class="checkbox" id="cb-15" onclick="event.stopPropagation(); toggleCheck(15)"></div>
+      <div class="resource-meta">
+        <div class="resource-num">15 · Product Market Fit</div>
+        <div class="resource-title">Claude for Legal: The Complete Founder Guide</div>
+        <span class="resource-type tag-paid">PAID</span>
+        <span class="resource-type tag-reading">READ</span>
+      </div>
+      <div class="expand-btn" id="exp-15">▾</div>
+    </div>
+    <div class="resource-detail" id="detail-15">
+      <div class="detail-row">
+        <div class="detail-label">What it covers</div>
+        <div class="detail-text">How to use Claude to handle contracts, compliance, and regulated documents without legal expertise. The parallel to GridScript is exact: legal documents = SOPs and protection guidelines; contracts = switching schedules; compliance review = constraint checking.</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">GridScript module</div>
+        <span class="gridscript-link">Module 3 — how to structure the SOP as a knowledge base the AI can cite reliably</span>
+        <br><span class="gridscript-link">Module 6 — how to present AI-reviewed documents for human sign-off (same pattern as legal review)</span>
+      </div>
+      <div class="action-item">🎯 Read this with a "translate to engineering" mindset. Wherever it says "contract clause", think "SOP protection guideline". Wherever it says "lawyer review", think "protection engineer confirmation". The workflows are structurally identical.</div>
+    </div>
+  </div>
+
+  <!-- Resource 16 -->
+  <div class="resource-card" id="card-16">
+    <div class="resource-header" onclick="toggleCard(16)">
+      <div class="checkbox" id="cb-16" onclick="event.stopPropagation(); toggleCheck(16)"></div>
+      <div class="resource-meta">
+        <div class="resource-num">16 · Product Market Fit</div>
+        <div class="resource-title">Claude for Finance: The Complete Guide</div>
+        <span class="resource-type tag-paid">PAID</span>
+        <span class="resource-type tag-reading">READ</span>
+      </div>
+      <div class="expand-btn" id="exp-16">▾</div>
+    </div>
+    <div class="resource-detail" id="detail-16">
+      <div class="detail-row">
+        <div class="detail-label">What it covers</div>
+        <div class="detail-text">Using Claude for financial analysis, structured document processing, and compliance workflows. The financial analysis pattern — extract structured data from documents, apply rules, produce a recommendation for human review — mirrors the GridScript protection setting workflow precisely.</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">GridScript module</div>
+        <span class="gridscript-link">Module 4 — the "run analysis and propose" pattern used in finance is the same pattern GridScript uses for leg settings</span>
+      </div>
+      <div class="action-item">🎯 Focus on the sections about document processing and structured output. Note how they handle cases where the AI is uncertain — GridScript needs the same "flag for engineer review" behaviour when the SOP doesn't clearly cover a scenario.</div>
+    </div>
+  </div>
+
+  <!-- Resource 14 -->
+  <div class="resource-card" id="card-14">
+    <div class="resource-header" onclick="toggleCard(14)">
+      <div class="checkbox" id="cb-14" onclick="event.stopPropagation(); toggleCheck(14)"></div>
+      <div class="resource-meta">
+        <div class="resource-num">14 · Product Market Fit</div>
+        <div class="resource-title">Building a Dealflow Engine with Claude Code (Full Guide)</div>
+        <span class="resource-type tag-paid">PAID</span>
+        <span class="resource-type tag-reading">READ</span>
+      </div>
+      <div class="expand-btn" id="exp-14">▾</div>
+    </div>
+    <div class="resource-detail" id="detail-14">
+      <div class="detail-row">
+        <div class="detail-label">What it covers</div>
+        <div class="detail-text">End-to-end Claude Code build guide — finds startups, filters them by criteria, generates outreach. What makes this relevant: it demonstrates building a multi-step pipeline where each stage passes structured output to the next. GridScript's parse → propose → sequence → generate pipeline has the same architecture.</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">GridScript module</div>
+        <span class="gridscript-link">All modules — the pipeline architecture (input → process → filter → output) mirrors GridScript's 7-module flow</span>
+      </div>
+      <div class="action-item">🎯 Study the pipeline structure, not the domain. How does each stage receive input? How does it pass output to the next stage? How are errors handled mid-pipeline? Apply these patterns to GridScript's module handoffs.</div>
+    </div>
+  </div>
+</div>
+
+<!-- PHASE 5 -->
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-dot" style="background:var(--green)"></div>
+    <div class="phase-title" style="color:var(--green)">Phase 5 — Founder Skills</div>
+    <div class="phase-subtitle">Running GridScript as a business, not just a tool · ongoing</div>
+  </div>
+
+  <!-- Resource 17 -->
+  <div class="resource-card" id="card-17">
+    <div class="resource-header" onclick="toggleCard(17)">
+      <div class="checkbox" id="cb-17" onclick="event.stopPropagation(); toggleCheck(17)"></div>
+      <div class="resource-meta">
+        <div class="resource-num">17 · Product Market Fit</div>
+        <div class="resource-title">The McKinsey Slide Playbook for Claude</div>
+        <span class="resource-type tag-paid">PAID</span>
+        <span class="resource-type tag-reading">READ</span>
+      </div>
+      <div class="expand-btn" id="exp-17">▾</div>
+    </div>
+    <div class="resource-detail" id="detail-17">
+      <div class="detail-row">
+        <div class="detail-label">What it covers</div>
+        <div class="detail-text">How to use Claude to produce McKinsey-quality slide decks. Directly relevant for building your investor pitch, your pilot program proposal to the first utility client, and your product demo deck.</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">GridScript use</div>
+        <span class="gridscript-link">Investor pitch deck + utility client pilot proposal</span>
+      </div>
+      <div class="action-item">🎯 Use this to produce GridScript's first one-page product brief — one page, one problem, one solution, one ROI number. That brief is what you leave behind after your first client meeting.</div>
+    </div>
+  </div>
+
+  <!-- Resource 18 -->
+  <div class="resource-card" id="card-18">
+    <div class="resource-header" onclick="toggleCard(18)">
+      <div class="checkbox" id="cb-18" onclick="event.stopPropagation(); toggleCheck(18)"></div>
+      <div class="resource-meta">
+        <div class="resource-num">18 · Product Market Fit</div>
+        <div class="resource-title">The Claude Playbook for Reddit Prospecting</div>
+        <span class="resource-type tag-paid">PAID</span>
+        <span class="resource-type tag-reading">READ</span>
+      </div>
+      <div class="expand-btn" id="exp-18">▾</div>
+    </div>
+    <div class="resource-detail" id="detail-18">
+      <div class="detail-row">
+        <div class="detail-label">What it covers</div>
+        <div class="detail-text">Using Claude to find and reach potential customers through community research. Reddit is not your channel — but the underlying skill (using AI to research prospects, understand their pain points, and craft targeted outreach) applies directly to identifying your first utility clients.</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">GridScript use</div>
+        <span class="gridscript-link">Business development — researching utility engineers and decision-makers before outreach</span>
+      </div>
+      <div class="skip-note">⚠️ Low priority. Read after you have a working prototype. The techniques apply but Reddit is not where utility engineers are — replace "Reddit" with "LinkedIn" and "engineering forums" when you apply this.</div>
+    </div>
+  </div>
+
+  <!-- Resource 19 -->
+  <div class="resource-card" id="card-19">
+    <div class="resource-header" onclick="toggleCard(19)">
+      <div class="checkbox" id="cb-19" onclick="event.stopPropagation(); toggleCheck(19)"></div>
+      <div class="resource-meta">
+        <div class="resource-num">19 · Product Market Fit</div>
+        <div class="resource-title">How I Rebuilt My SEO Strategy Inside Claude</div>
+        <span class="resource-type tag-paid">PAID</span>
+        <span class="resource-type tag-reading">READ</span>
+      </div>
+      <div class="expand-btn" id="exp-19">▾</div>
+    </div>
+    <div class="resource-detail" id="detail-19">
+      <div class="detail-row">
+        <div class="detail-label">What it covers</div>
+        <div class="detail-text">Using Claude for content and SEO strategy. Very low relevance to GridScript's B2B utility market — utility procurement decisions are not driven by Google search. File this for later if you build a public-facing product or blog.</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">GridScript use</div>
+        <span class="gridscript-link">Lowest priority — B2B utility sales is relationship-driven, not SEO-driven</span>
+      </div>
+      <div class="skip-note">⚠️ Skip for now. Revisit only if you eventually build a public website or content marketing channel for GridScript. Your first 5 clients will come from your professional network, not from Google.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleCheck(n) {
+  const cb = document.getElementById('cb-' + n);
+  const card = document.getElementById('card-' + n);
+  const isChecked = cb.classList.toggle('checked');
+  card.classList.toggle('completed', isChecked);
+  updateProgress();
+}
+
+function toggleCard(n) {
+  const detail = document.getElementById('detail-' + n);
+  const exp = document.getElementById('exp-' + n);
+  const isOpen = detail.classList.toggle('open');
+  exp.textContent = isOpen ? '▴' : '▾';
+}
+
+function updateProgress() {
+  const total = 20;
+  const done = document.querySelectorAll('.checkbox.checked').length;
+  const pct = (done / total) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = done + ' / ' + total + ' completed';
+}
+</script>
+</body>
+</html>
